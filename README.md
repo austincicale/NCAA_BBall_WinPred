@@ -31,8 +31,8 @@ This project utilizes [The College Basketball Dataset](https://www.kaggle.com/da
 
 | Package       | Uses                                                                          |
 |---------------|-------------------------------------------------------------------------------|
-| [car](https://cran.r-project.org/web/packages/car/index.html)         | Data manipulation and analysis                                               |
-| [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)       | Data visualization and plot creation                                         |
+| [car](https://cran.r-project.org/web/packages/car/index.html)         | Graphical regression diagnostics and ANOVA testing                                               |
+| [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)       | Data manipulation, exploration, and visualization                                         |
 
 ### Data Cleaning/Preparation
 
