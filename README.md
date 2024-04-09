@@ -23,10 +23,8 @@ This project utilizes [The College Basketball Dataset](https://www.kaggle.com/da
 #### Programming Language
 - **[R](https://www.r-project.org/about.html)**:
   - Data preprocessing
-  - Exploratory Data Analysis (EDA)
   - Statistical analysis
   - Data visualization
-  - Machine learning model development
   - Reporting and documentation using R Markdown
 
 #### Libraries and Packages
@@ -54,6 +52,29 @@ cbb_train = cbb_shuffled[1:2000,]
 cbb_test = cbb_shuffled[2001:2455,]
 ```
 ### Data Analysis
+
+Using all variables from the filtered dataset, three methods were employed to construct a model predicting win percentage: backward, forward, and stepwise selection. These methods created identical linear models featuring thirteen predictor variables. An analysis of the five largest absolute residuals of the model was conducted to assess the degree of their influence and determine if any data points should be removed. Utilizing Cook's distance with a threshold of 0.01, there appeared to be no significant concern for influence in the model, and consequently, no data points were excluded.
+
+```r
+# Create a model predicting win percentage using the training data and the backward selection method
+full = lm(win_pct~., data=cbb_train)
+mse = (summary(full)$sigma)^2
+cbb_mod1 = step(full, scale = mse, trace = FALSE)
+```
+```r
+# Calculate Cook's distance for 5 largest absolute residuals to estimate the influence of these points
+indices = sort(abs(cbb_mod1$resid), decreasing = TRUE, index.return=TRUE)$ix[1:5]
+head(sort(cooks.distance(cbb_mod1)[indices], decreasing=TRUE))
+```
+#### Cook's Distance for the 5 Largest Absolute Residuals
+| Observation | Cook's Distance |
+|-------------|-----------------|
+| 697         | 0.008070677     |
+| 1352        | 0.007535711     |
+| 249         | 0.006565230     |
+| 1561        | 0.004088719     |
+| 949         | 0.003614799     |
+
 
 <img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
 
