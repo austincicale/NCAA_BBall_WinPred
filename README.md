@@ -4,7 +4,6 @@
 - [Data Sources](#data-sources)
 - [Tools](#tools)
 - [Data Cleaning/Preparation](#data-cleaningpreparation)
-- [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
 - [Data Analysis](#data-analysis)
 - [Results/Findings](#resultsfindings)
 - [Recommendations](#recommendations)
@@ -34,15 +33,28 @@ This project utilizes [The College Basketball Dataset](https://www.kaggle.com/da
 
 | Package       | Uses                                                                          |
 |---------------|-------------------------------------------------------------------------------|
-| [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html)         | Data manipulation and analysis                                               |
-| [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html)       | Data visualization and plot creation                                         |
+| [car](https://cran.r-project.org/web/packages/car/index.html)         | Data manipulation and analysis                                               |
+| [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)       | Data visualization and plot creation                                         |
 
 ### Data Cleaning/Preparation
 
 In the initial data preparation phase, the following tasks were executed:
-1. Removed all NA values and individuals not in the labor force, reducing the data from 3,252,599 observations to 261,202 observations.
-2. Removed unnecessary and redundant variables.
-3. Manipulated certain variables to simplify the data, such as merging similar education levels rather than having levels for each grade.
-4. Converted the data types for certain variables to better reflect the data and enhance analysis.
+1. Added a win percentage variable to the data set, calculated by dividing games played by games won.
+2. Removed unessential and redundant variables (team name, games played, games won, power rating, postseason elimination round, NCAA tournament seed, and year).
+3. Split the data for cross-validation, randomly assigning 2000 observations to the training set and 455 observations to the testing set.
 
+```r
+#Randomized the rows of the data set
+set.seed(12345)
+rows = sample(nrow(cbb))
+cbb_shuffled = cbb[rows,]
 
+#Split the data into training and test sets for cross-validation.
+cbb_train = cbb_shuffled[1:2000,]
+cbb_test = cbb_shuffled[2001:2455,]
+```
+### Data Analysis
+
+<img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
+
+<img width="572" alt="Screenshot 2024-04-09 at 2 15 31 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/e9d9331a-5014-496d-a779-c050f5969b9d">
