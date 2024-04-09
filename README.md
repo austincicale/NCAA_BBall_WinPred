@@ -75,7 +75,29 @@ head(sort(cooks.distance(cbb_mod1)[indices], decreasing=TRUE))
 | 1561        | 0.004088719     |
 | 949         | 0.003614799     |
 
+Further experimentation was undertaken with the existing model to explore opportunities for enhancing predictions of win percentage. Various transformations were applied to both the response and predictor variables in an attempt to improve the variance explained by the model's predictors (adjusted r-squared). Despite these efforts, none of the variable transformations resulted in a notable increase in the adjusted r-squared. However, certain variable interactions exhibited promise for enhancing the model:
+  - Adjusted Offensive Efficiency with Turnover Percentage Committed
+  - Adjusted Offensive Efficiency with Effective Field Goal Percentage Shot
+  - Turnover Percentage Committed with Adjusted Tempo
+  - Adjusted Defensive Efficiency with Effective Field Goal Percentage Allowed
+  - Adjusted Defensive Efficiency with Free Throw Rate
 
+These five variable interactions were integrated into the original model, resulting in an increased adjusted r-squared. Although this addition appeared to enhance the model's predictive ability in terms of explained variance by the predictors, uncertainty persisted regarding the necessity of all five interactions. Backward selection methodology was employed to construct the most efficient model, incorporating the five variable interactions alongside all variables from the original model as potential predictors of winning percentage. Notably, this selection approach retained all predictors from the original model and incorporated all five variable interactions.
+
+```r
+# Develop a model using backward selection methodology, taking into account the five potential variable interactions
+full_2 = lm(win_pct ~ ADJOE + EFG_D + CONF + ADJDE + EFG_O + TOR + ORB + ADJ_T + FTR + FTRD + TORD + DRB + `3P_D` + ADJOE*TORD + EFG_O*ADJOE + EFG_D*ADJDE + ADJ_T*TORD + FTR*ADJDE, data=cbb_train)
+mse_2 = (summary(full_2)$sigma)^2
+cbb_final_mod = step(full_2, scale = mse_2, trace = FALSE)
+summary(cbb_final_mod)
+```
+#### Final Model Predictor Variable Summary
 <img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
+
+*Note. Categorical variable Conference (CONF) not included for spacing reasons. Refer to [The College Basketball Dataset](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset) for variable descriptions.*
+
+To validate that the new model incorporating interaction terms represents an improvement over the original model, ANOVA testing was conducted to compare the two models. The test yielded an extremely small p-value of 1.247e-08, indicating that the slope relating win percentage to the interaction terms is non-zero for at least one of the variable interactions. 
+
+Finally, the performance of the finalized model in predicting win percentage for a new dataset was evaluated. With a small shrinkage value of -0.024, there is compelling evidence to suggest that the model similarly predicts win percentage for both the training and testing data.
 
 <img width="572" alt="Screenshot 2024-04-09 at 2 15 31 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/e9d9331a-5014-496d-a779-c050f5969b9d">
