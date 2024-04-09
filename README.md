@@ -92,12 +92,7 @@ These five variable interactions were integrated into the original model, result
 full_2 = lm(win_pct ~ ADJOE + EFG_D + CONF + ADJDE + EFG_O + TOR + ORB + ADJ_T + FTR + FTRD + TORD + DRB + `3P_D` + ADJOE*TORD + EFG_O*ADJOE + EFG_D*ADJDE + ADJ_T*TORD + FTR*ADJDE, data=cbb_train)
 mse_2 = (summary(full_2)$sigma)^2
 cbb_final_mod = step(full_2, scale = mse_2, trace = FALSE)
-summary(cbb_final_mod)
 ```
-#### Final Model Predictor Variable Summary
-<img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
-
-*Note. Categorical variable Conference (CONF) not included for spacing constraints. Refer to variable descriptions [here](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset).*
 
 To validate that the new model incorporating interaction terms represents an improvement over the original model, ANOVA testing was conducted to compare the two models. The test yielded an extremely small p-value of 1.247e-08, indicating that the slope relating win percentage to the interaction terms is non-zero for at least one of the variable interactions. This is the expected result, and it supports the continuation of the analysis using this new, finalized model. 
 
@@ -116,7 +111,14 @@ abline(0,1, col = 'red')
 
 ### Results/Findings
 
+The final model results are summarized in the following table. 
+
+#### Final Model Predictor Variable Summary
+<img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
+
+*Note. Categorical variable Conference (CONF) not included for spacing constraints. Refer to variable descriptions [here](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset).*
+
 ### Recommendations
 
 
-### References
+### Limitations
