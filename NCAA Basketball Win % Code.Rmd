@@ -1,0 +1,146 @@
+---
+title: "SAIL APPLICATRION"
+output: html_document
+date: '2023-01-16'
+---
+
+
+```{r setup, include = FALSE}
+library(readr)
+library(tidyverse)
+library(car)
+```
+
+```{r}
+#Imported Andrew Sundberg's College Basketball Dataset
+cbb_raw = read_csv("/Users/austincicale/Downloads/archive 2/cbb.csv", show_col_types = FALSE)
+
+#Added a win percentage variable to the data set. Calculated by dividing games played by games won.
+cbb_raw$win_pct = cbb_raw$W / cbb_raw$G
+
+#Removed unessential or redundant variables (TEAM G, W, BARTHAG, WAB, POSTSEASON, SEED, YEAR)
+cbb = select(cbb_raw, -c(1,3,4,7,21:24))
+```
+
+```{r}
+#Randomized the rows of the data set
+set.seed(12345)
+rows = sample(nrow(cbb))
+cbb_shuffled = cbb[rows,]
+
+#Split the data into training and test sets for cross validation.
+cbb_train = cbb_shuffled[1:2000,]
+cbb_test = cbb_shuffled[2001:2455,]
+```
+
+```{r}
+#Created model to predict win percentage using the training data and a backward selection method.
+full = lm(win_pct~., data=cbb_train)
+mse = (summary(full)$sigma)^2
+cbb_mod1 = step(full, scale = mse, trace = FALSE)
+summary(cbb_mod1)
+```
+
+```{r}
+#Created model to predict win percentage using the training data and a forward selection method.
+none = lm(win_pct~1, data=cbb_train)
+cbb_mod2 = step(none, scope=list(upper=full), scale = mse, direction="forward", trace = FALSE)
+summary(cbb_mod2) 
+```
+
+```{r}
+#Created model to predict win percentage using the training data and a stepwise selection method.
+cbb_mod3 = step(none, scope=list(upper=full), scale = mse, trace = FALSE)
+summary(cbb_mod3)
+```
+
+```{r, warning=FALSE}
+#Produced relevant plots for checking model conditions (linearity, constant variance, and normality)
+plot(cbb_mod1, 1:2)
+```
+
+```{r}
+#Residual analysis using the standardized and studentized residuals of the five largest absolute residuals.
+indices = sort(abs(cbb_mod1$resid), decreasing = TRUE, index.return=TRUE)$ix[1:5]
+rstandard(cbb_mod1)[indices]
+rstudent(cbb_mod1)[indices]
+```
+
+```{r}
+#Analyzing leverages for the five largest absolute residuals.
+hatvalues(cbb_mod1)[indices] 
+2*2/2000
+3*2/2000
+```
+
+```{r}
+#Calculating Cook's distance for the five largest absolute residuals, estimating the influence of these points.
+head(sort(cooks.distance(cbb_mod1)[indices], decreasing=TRUE))
+```
+
+```{r}
+#Experimenting with variable transformations and interactions.
+cbb_test_mod = lm(win_pct ~ ADJOE + EFG_D + CONF + ADJDE + EFG_O + TOR + ORB + ADJ_T + FTR + FTRD + TORD + DRB + `3P_D` + ADJOE*TORD + 
+                  EFG_O*ADJOE +  EFG_D*ADJDE + ADJ_T*TORD + FTR*ADJDE, data = cbb_train)
+summary(cbb_test_mod)
+```
+
+```{r}
+#Finalizing model using a backward selection method, including potential variable interactions selected in cbb_test_mod. 
+full_2 = lm(win_pct ~ ADJOE + EFG_D + CONF + ADJDE + EFG_O + 
+    TOR + ORB + ADJ_T + FTR + FTRD + TORD + DRB + `3P_D` + ADJOE*TORD + EFG_O*ADJOE + EFG_D*ADJDE + ADJ_T*TORD + FTR*ADJDE, data=cbb_train)
+mse_2 = (summary(full_2)$sigma)^2
+cbb_final_mod = step(full_2, scale = mse_2)
+summary(cbb_final_mod)
+```
+
+```{r, warning=FALSE}
+#Produced relevant plots for checking conditions (linearity, constant variance, and normality) of the final model.
+plot(cbb_final_mod, 1:2)
+```
+
+```{r}
+#Reassure model improvement using ANOVA testing.
+anova(cbb_mod1, cbb_final_mod)
+```
+
+```{r}
+#Compute residuals for the testing data, using the model created with the training data.
+fit_win_pct = predict(cbb_final_mod, newdata = cbb_test)
+cbb_test_resid = cbb_test$win_pct - fit_win_pct
+```
+
+
+```{r}
+#Compute the mean value of the testing data residuals to assure the zero mean condition is being upheld.
+mean(cbb_test_resid)
+```
+
+```{r}
+#Compute the standard deviation of the testing and trained data residuals to check variability condition.
+summary(cbb_final_mod)$sigma
+sd(cbb_test_resid)
+```
+
+```{r, warning=FALSE}
+#Construct plots of the testing and trained data residuals to check normality condition.
+plot(cbb_final_mod, 2)
+
+qqnorm(cbb_test_resid)
+qqline(cbb_test_resid)
+```
+
+```{r}
+#Compute shrinkage; square the cross-validation correlation and subtract it from the multiple R squared of the training sample.
+shrinkage = summary(cbb_mod1)$r.squared - cor(cbb_test$win_pct, fit_win_pct)^2 
+shrinkage
+```
+
+```{r}
+#Produce a plot displaying relationship between actual win percentage and predicted win percentage.
+yhat = predict(cbb_final_mod, newdata = cbb_test)
+win.pct.test = cbb_test$win_pct
+plot(win.pct.test, yhat, ylab = "Predicted Win Percentage", xlab = "Actual Win Percentage")
+abline(0,1, col = 'red')
+```
+
