@@ -8,7 +8,6 @@
 - [Results/Findings](#resultsfindings)
 - [Recommendations](#recommendations)
 - [Limitations](#limitations)
-- [References](#references)
 
 ### Project Overview
 
@@ -24,8 +23,12 @@ This project utilizes [The College Basketball Dataset](https://www.kaggle.com/da
 - **[R](https://www.r-project.org/about.html)**:
   - Data preprocessing
   - Statistical analysis
+  - Predictive linear modeling
+  - Linear model assumption analysis
+  - Residual analysis
+  - Model transformation
   - Data visualization
-  - Reporting and documentation using R Markdown
+  
 
 #### Libraries and Packages
 
@@ -94,10 +97,26 @@ summary(cbb_final_mod)
 #### Final Model Predictor Variable Summary
 <img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
 
-*Note. Categorical variable Conference (CONF) not included for spacing reasons. Refer to [The College Basketball Dataset](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset) for variable descriptions.*
+*Note. Categorical variable Conference (CONF) not included for spacing constraints. Refer to variable descriptions [here](https://www.kaggle.com/datasets/andrewsundberg/college-basketball-dataset).*
 
-To validate that the new model incorporating interaction terms represents an improvement over the original model, ANOVA testing was conducted to compare the two models. The test yielded an extremely small p-value of 1.247e-08, indicating that the slope relating win percentage to the interaction terms is non-zero for at least one of the variable interactions. 
+To validate that the new model incorporating interaction terms represents an improvement over the original model, ANOVA testing was conducted to compare the two models. The test yielded an extremely small p-value of 1.247e-08, indicating that the slope relating win percentage to the interaction terms is non-zero for at least one of the variable interactions. This is the expected result, and it supports the continuation of the analysis using this new, finalized model. 
 
-Finally, the performance of the finalized model in predicting win percentage for a new dataset was evaluated. With a small shrinkage value of -0.024, there is compelling evidence to suggest that the model similarly predicts win percentage for both the training and testing data.
+After verifying the model satisfies the assumptions of linear modeling, the last step is to see how the finalized model performs when it comes to predicting the winning percentage for a new set of data. A fairly small shrinkage value was computed, indicating the model similarly predicts win percentage for both the training and testing data. A graphical representation of the model’s ability to predict win percentage for the testing data is shown in the figure below. If the model predicts efficiently, the testing data points data should relatively follow the red curve. This appears to be the case, further supporting the model’s ability to accurately predict the winning percentage for out-of-sample data.
+
+```r
+# Produce a plot displaying the relationship between actual and predicted win percentage
+yhat = predict(cbb_final_mod, newdata = cbb_test)
+win.pct.test = cbb_test$win_pct
+plot(win.pct.test, yhat, ylab = "Predicted Win Percentage", xlab = "Actual Win Percentage")
+abline(0,1, col = 'red')
+```
+#### Actual Win Percentage vs Predicted Win Percentage
 
 <img width="572" alt="Screenshot 2024-04-09 at 2 15 31 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/e9d9331a-5014-496d-a779-c050f5969b9d">
+
+### Results/Findings
+
+### Recommendations
+
+
+### References
