@@ -111,7 +111,7 @@ abline(0,1, col = 'red')
 
 ### Results/Findings
 
-The final model results are summarized in the following table. 
+The coefficient of each variable signifies its impact on predicting winning percentage. Furthermore, the p-values indicate the statistical significance of the variables within the model. The conclusive results of the model are outlined in the following table: 
 
 #### Final Model Predictor Variable Summary
 <img width="576" alt="Screenshot 2024-04-09 at 2 16 22 PM" src="https://github.com/austincicale/NCAA_BBall_WinPred/assets/77798880/bbfbc32b-f76d-4a90-97d3-3b9af7cfd836">
@@ -120,5 +120,19 @@ The final model results are summarized in the following table.
 
 ### Recommendations
 
+From a coaching perspective, the following actions are recommended:
+- Prioritize the variables included in the finalized model when developing offensive and defensive strategies that focus on optimizing these predictors to their benefit
+- When recruiting, look for players that excel in areas positively influencing winning percentage according to the model.
+
+For future research, the following actions are recommended:
+- Explore additional data sources, incorporating variables not considered in this model.
+- Experiment with advanced modeling techniques beyond traditional regression analysis. Consider machine learning algorithms to uncover complex relationships and nonlinearities within the data.
 
 ### Limitations
+
+##### 1. Limited Number of Variables
+  - The dataset used in this project was limited to 24 variables, which may have restricted the comprehensiveness of the analysis and potentially overlooked important predictors of winning percentage not included in the data.
+
+##### 2. Focus on Regression Analysis
+  - The analysis primarily relied on traditional regression analysis techniques to model the relationship between predictor variables and winning percentage, which may not fully capture the complexity of interactions and nonlinearities in the data.
+
